@@ -25,9 +25,13 @@ export default async (req, res) => {
 
     case 'PUT':
       try {
-        const task = await Task.findOneAndUpdate({ _id: id }, body);
-        await task.save();
-        return res.status(200).json('Updated Task');
+        const task = await Task.findOneAndUpdate({ _id: id }, body, {
+          new: true,
+        });
+        if (!task) {
+          return res.status(404).json({ message: 'Task not found' });
+        }
+        return res.status(200).json(task);
       } catch (error) {}
 
     case 'DELETE':
@@ -37,7 +41,9 @@ export default async (req, res) => {
           return res.status(404).json({ message: 'Task not found' });
         }
         return res.status(200).json('Deleted Task');
-      } catch (error) {}
+      } catch (error) {
+        return res.status(400).json({ message: error.message });
+      }
     default:
       return res.status(400).json({ error: 'Method not allowed' });
   }
