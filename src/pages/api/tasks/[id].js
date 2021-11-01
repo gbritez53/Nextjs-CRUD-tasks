@@ -32,7 +32,9 @@ export default async (req, res) => {
           return res.status(404).json({ message: 'Task not found' });
         }
         return res.status(200).json(task);
-      } catch (error) {}
+      } catch (error) {
+        return res.status(400).json({ message: error.message });
+      }
 
     case 'DELETE':
       try {
